@@ -13,18 +13,21 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DomainException.class)
     public ResponseEntity<ApiError> handleDomain(DomainException ex) {
+        ex.printStackTrace();
 
         return build(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     @ExceptionHandler(CouponAlreadyDeletedException.class)
     public ResponseEntity<ApiError> handleDeleted(CouponAlreadyDeletedException ex) {
+        ex.printStackTrace();
 
         return build(HttpStatus.CONFLICT, ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneric(Exception ex) {
+        ex.printStackTrace();
 
         return build(HttpStatus.INTERNAL_SERVER_ERROR,
                 "Unexpected error");
