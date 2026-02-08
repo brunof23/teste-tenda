@@ -36,4 +36,12 @@ public class CouponRepositoryJpa implements CouponRepository {
                 .map(CouponEntityMapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public List<Coupon> findAllDeleted() {
+        return jpa.findByDeletedTrue()
+                .stream()
+                .map(CouponEntityMapper::toDomain)
+                .toList();
+    }
 }

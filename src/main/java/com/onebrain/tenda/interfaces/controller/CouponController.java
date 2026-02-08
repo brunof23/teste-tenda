@@ -1,10 +1,12 @@
 package com.onebrain.tenda.interfaces.controller;
 
 import com.onebrain.tenda.application.command.CreateCouponCommand;
+import com.onebrain.tenda.application.command.UpdateCouponCommand;
 import com.onebrain.tenda.application.usecases.*;
 import com.onebrain.tenda.domain.model.Coupon;
 import com.onebrain.tenda.interfaces.controller.dto.CouponResponse;
 import com.onebrain.tenda.interfaces.controller.dto.CreateCouponRequest;
+import com.onebrain.tenda.interfaces.controller.dto.UpdateCouponRequest;
 import com.onebrain.tenda.interfaces.controller.mapper.CouponResponseMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,6 +27,8 @@ public class CouponController {
     private final DeleteCouponUseCase deleteUseCase;
     private final GetCouponByIdUseCase getByIdUseCase;
     private final GetAllCouponsUseCase getAllUseCase;
+    private final UpdateCouponsUseCase updateUseCase;
+    private final GetDeletedCouponsUseCase getDeletedCouponsUseCase;
 
     @Operation(summary = "Create coupon")
     @PostMapping
@@ -62,5 +66,32 @@ public class CouponController {
     @GetMapping
     public List<CouponResponse> getAll() {
         return getAllUseCase.execute();
+    }
+
+    @Operation(summary = "Update coupon by ID")
+    @PutMapping("/{id}")
+    public CouponResponse update(
+            @PathVariable UUID id,
+            @RequestBody UpdateCouponRequest req
+    ) {
+
+        var coupon = updateUseCase.execute(
+                new UpdateCouponCommand(
+                        id,
+                        req.code(),
+                        req.description(),
+                        req.discountValue(),
+                        req.expirationDate(),
+                        req.published()
+                )
+        );
+
+        return CouponResponseMapper.toResponse(coupon);
+    }
+
+    @Operation(summary = "Get all coupons deleted")
+    @GetMapping("/deleted")
+    public List<CouponResponse> getDeleted() {
+        return getDeletedCouponsUseCase.execute();
     }
 }

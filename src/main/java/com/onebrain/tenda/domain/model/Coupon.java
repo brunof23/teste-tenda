@@ -2,20 +2,20 @@ package com.onebrain.tenda.domain.model;
 
 import com.onebrain.tenda.domain.exception.CouponAlreadyDeletedException;
 import com.onebrain.tenda.domain.exception.DomainException;
-import lombok.Getter;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-@Getter
+@Data
 public class Coupon {
 
-    private final UUID id;
-    private final String code;
-    private final String description;
-    private final BigDecimal discountValue;
-    private final LocalDate expirationDate;
+    private UUID id;
+    private String code;
+    private String description;
+    private BigDecimal discountValue;
+    private LocalDate expirationDate;
 
     private boolean published;
     private boolean deleted;
@@ -69,5 +69,31 @@ public class Coupon {
     public void restoreDeleted(boolean deleted) {
         this.deleted = deleted;
     }
+
+    public void update(
+            String code,
+            String description,
+            BigDecimal discountValue,
+            LocalDate expirationDate,
+            boolean published
+    ) {
+
+        if (deleted)
+            throw new DomainException("Cupon deletado não pode ser atualizado");
+
+        this.code = normalize(code);
+
+        if (discountValue.compareTo(BigDecimal.valueOf(0.5)) < 0)
+            throw new DomainException("Desconto mínimo é de 0.5");
+
+        if (expirationDate.isBefore(LocalDate.now()))
+            throw new DomainException("Data de expiração não pode ser no passado");
+
+        this.description = description;
+        this.discountValue = discountValue;
+        this.expirationDate = expirationDate;
+        this.published = published;
+    }
+
 }
 

@@ -8,7 +8,8 @@ import java.util.UUID;
 
 public interface CouponRepository {
     Coupon save(Coupon coupon);
-
     Optional<Coupon> findById(UUID id);
     List<Coupon> findAllActive();
+    List<Coupon> findAllDeleted();
+
 }

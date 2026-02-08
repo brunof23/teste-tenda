@@ -20,6 +20,8 @@ public class DeleteCouponUseCase {
 
         coupon.softDelete();
 
+        coupon.setPublished(false);
+
         repository.save(coupon);
     }
 }

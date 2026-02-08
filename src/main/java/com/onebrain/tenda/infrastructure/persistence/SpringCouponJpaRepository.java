@@ -9,6 +9,6 @@ import java.util.UUID;
 public interface SpringCouponJpaRepository
         extends JpaRepository<CouponEntity, UUID> {
     List<CouponEntity> findByDeletedFalse();
-
+    List<CouponEntity> findByDeletedTrue();
 }
 
