@@ -5,6 +5,7 @@ import com.onebrain.tenda.domain.exception.DomainException;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.text.Normalizer;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -39,9 +40,17 @@ public class Coupon {
     }
 
     private String normalize(String raw) {
-        String clean = raw.replaceAll("[^a-zA-Z0-9]", "").toUpperCase();
-        if (clean.length() != 6) throw new DomainException("O código precisa ter 6 caracteres");
-        return clean;
+        String normalized = Normalizer.normalize(raw, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "");
+
+        String clean = normalized
+                .replaceAll("[^a-zA-Z0-9]", "")
+                .toUpperCase();
+
+        if (clean.length() < 6)
+            throw new DomainException("O código precisa ter 6 caracteres");
+
+        return clean.substring(0, 6);
     }
 
     private String require(String v) {
